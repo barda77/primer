@@ -66,41 +66,40 @@ Apply with: textNode.textStyleId = typography['text-body-medium'].figmaStyleId
 
 ## Figma Component Mapping
 
-When pushing screens to Figma, always import and use these exact component symbols
-instead of creating raw shapes.
+The complete mapping between @primer/react components and Figma component keys
+is in src/tokens/figmaComponents.ts.
 
-### Button
-Page ID: 136:1805
-- Primary / Medium / Rest: 30258:5709
-- Primary / Large / Rest: 30258:5723
-- Primary / Small / Rest: 30258:5716
-- Secondary / Medium / Rest: 30258:5583
-- Secondary / Large / Rest: 30258:5597
-- Secondary / Small / Rest: 30258:5590
+### Rule — always follow this when writing any screen to Figma:
+1. Read src/tokens/figmaComponents.ts to get the component key
+2. Use figma.importComponentByKeyAsync(key) to import the component
+3. Use .createInstance() to place it — never draw raw shapes
+4. Set instance properties (text, variant, size) after placing
 
-### Text Input
-Page ID: 27986:142917
-Component Set ID: 15341:46504 | Set Key: b41f978e13eb618df1a53950cf3e76ad46b3d7cf
-- Medium / Rest / No validation: key `5e8918f821498aea2445c196d343831729e53153` (id 15341:46505)
-- Small / Rest / No validation:  key `90cc87850593cfb28d6e657c0dc6e68298a5940c` (id 15341:46519)
-- Large / Rest / No validation:  key `6b7f715ab6d636f22b9dfad0f3644fa1966ced48` (id 15341:46533)
-
-### Usage in use_figma scripts
-To place a Button instance:
+### Example workflow for a screen with a Button:
 ```js
-const buttonComp = await figma.importComponentByKeyAsync('30258:5709')
-const buttonInstance = buttonComp.createInstance()
+const { figmaComponents } = // read src/tokens/figmaComponents.ts
+const buttonComp = await figma.importComponentByKeyAsync(figmaComponents.Button.key)
+const btn = buttonComp.createInstance()
+parent.appendChild(btn)
+// Then set variant properties:
+btn.setProperties({ variant: 'primary', size: 'medium' })
+// Then override text:
+const label = btn.findOne(n => n.name === 'Button' && n.type === 'TEXT')
+if (label) { await figma.loadFontAsync(label.fontName); label.characters = 'Sign in' }
 ```
 
-To place a TextInput instance:
-```js
-const inputComp = await figma.importComponentByKeyAsync('5e8918f821498aea2445c196d343831729e53153')
-const inputInstance = inputComp.createInstance()
-```
-
-When building a screen that has a primary button, always use importComponentByKeyAsync
-with the correct key above, then createInstance(). Never draw a raw rectangle
-for a button.
+### Component → key reference:
+- Button       → figmaComponents.Button.key
+- TextInput    → figmaComponents.TextInput.key
+- Select       → figmaComponents.Select.key
+- Checkbox     → figmaComponents.Checkbox.key
+- Radio        → figmaComponents.Radio.key
+- Avatar       → figmaComponents.Avatar.key
+- Label        → figmaComponents.Label.key
+- Link         → figmaComponents.Link.key
+- Spinner      → figmaComponents.Spinner.key
+- Dialog       → figmaComponents.Dialog.key
+- Heading      → figmaComponents.Heading.key
 
 ## Component mapping
 - React <Button> → Figma "Button" component
