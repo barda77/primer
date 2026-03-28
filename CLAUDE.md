@@ -101,6 +101,28 @@ if (label) { await figma.loadFontAsync(label.fontName); label.characters = 'Sign
 - Dialog       → figmaComponents.Dialog.key
 - Heading      → figmaComponents.Heading.key
 
+## Spacing — two-way mapping
+
+Spacing is defined in src/tokens/spacing.ts.
+
+### In React components
+Primer React uses a numeric scale: 1 = 4px, 2 = 8px, 3 = 12px etc.
+<Box padding={4}> = 16px = space/medium in Figma
+
+### When writing to Figma via use_figma scripts
+Read src/tokens/spacing.ts to convert React spacing props to Figma variable names.
+Bind spacing variables to auto-layout padding and gap — never hardcode px values.
+
+### Common values
+| React prop | px   | Figma variable  |
+|------------|------|-----------------|
+| 1          | 4px  | base/size/4     |
+| 2          | 8px  | base/size/8     |
+| 3          | 12px | base/size/12    |
+| 4          | 16px | space/medium    |
+| 6          | 24px | space/large     |
+| 8          | 32px | base/size/32    |
+
 ## Component mapping
 - React <Button> → Figma "Button" component
 - React <TextInput> → Figma "TextInput" component
